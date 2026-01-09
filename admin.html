@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin MovReez</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div id="login-box" class="min-h-screen flex items-center justify-center bg-gray-900 px-4">
+        <div class="text-center w-full max-w-xs">
+            <h2 class="text-white text-xl font-bold mb-4">LOGIN ADMIN</h2>
+            <input type="password" id="passInput" placeholder="Password..." class="w-full p-3 rounded mb-3 text-center">
+            <button onclick="cekLogin()" class="w-full bg-red-600 text-white p-3 rounded font-bold">MASUK</button>
+        </div>
+    </div>
+
+    <div id="admin-panel" class="hidden min-h-screen p-6 max-w-xl mx-auto">
+        <div class="bg-white p-8 rounded-xl shadow-2xl">
+            <h1 class="text-2xl font-bold text-red-600 mb-6 border-b pb-4">Posting Konten Baru</h1>
+            
+            <form id="filmForm" class="flex flex-col gap-4">
+                <input type="text" id="judul" placeholder="Judul Clickbait" required class="p-3 border rounded border-gray-300">
+                <textarea id="deskripsi" placeholder="Deskripsi Singkat..." required class="p-3 border rounded h-24 border-gray-300"></textarea>
+                <select id="tag" class="p-3 border rounded"><option>HOT 🔥</option><option>ANIME ⛩️</option><option>DRAKOR 🇰🇷</option><option>FILM 🎬</option></select>
+                <input type="text" id="link" placeholder="Link Shopee Affiliate" required class="p-3 border bg-orange-50 border-orange-200">
+                <button type="submit" id="btnSubmit" class="bg-red-600 text-white py-3 rounded font-bold hover:bg-red-700">POSTING SEKARANG</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // --- PASTE KONFIGURASI FIREBASE YANG SAMA PERSIS DI SINI ---
+        const firebaseConfig = {
+  	apiKey: "AIzaSyCdT_iYVwas7fzBcKI3lTM28Xjp4yWf3qE",
+  	authDomain: "fillmsinos.firebaseapp.com",
+  	projectId: "fillmsinos",
+  	storageBucket: "fillmsinos.firebasestorage.app",
+ 	messagingSenderId: "773327831210",
+  	appId: "1:773327831210:web:7f5e8fb732e08ee08b10d3"
+	};
+        // -----------------------------------------------------------
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Logic Posting
+        document.getElementById('filmForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmit');
+            btn.innerText = "Mengirim...";
+            
+            try {
+                await addDoc(collection(db, "movies"), {
+                    title: document.getElementById('judul').value,
+                    desc: document.getElementById('deskripsi').value,
+                    tag: document.getElementById('tag').value,
+                    link: document.getElementById('link').value,
+                    createdAt: new Date()
+                });
+                alert("✅ Sukses Posting!");
+                document.getElementById('filmForm').reset();
+            } catch (err) {
+                alert("Error: " + err.message);
+            }
+            btn.innerText = "POSTING SEKARANG";
+        });
+    </script>
+
+    <script>
+        function cekLogin() {
+            // PASSWORD ADMIN (Ganti 'admin123' sesukamu)
+            if(document.getElementById('passInput').value === 'admin123') {
+                document.getElementById('login-box').style.display = 'none';
+                document.getElementById('admin-panel').style.display = 'block';
+            } else {
+                alert('Password Salah!');
+            }
+        }
+    </script>
+</body>
+</html>
